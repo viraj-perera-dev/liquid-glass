@@ -1,5 +1,5 @@
 {
-  "name": "liquid-glass",
+  "name": "@developer-hub/liquid-glass",
   "version": "1.0.0",
   "description": "Liquid Glass CSS effect inspired by Apple WWDC 2025",
   "keywords": [
@@ -10,6 +10,9 @@
     "blur",
     "ui"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Viraj Perera",
   "license": "MIT",
   "main": "dist/LiquidGlass.cjs",
