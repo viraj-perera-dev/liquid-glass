@@ -1,0 +1,52 @@
+{
+  "name": "liquid-glass",
+  "version": "1.0.0",
+  "description": "Liquid Glass CSS effect inspired by Apple WWDC 2025",
+  "keywords": [
+    "css",
+    "glassmorphism",
+    "liquid",
+    "apple",
+    "blur",
+    "ui"
+  ],
+  "author": "Viraj Perera",
+  "license": "MIT",
+  "main": "dist/LiquidGlass.cjs",
+  "module": "dist/LiquidGlass.esm.js",
+  "files": [
+    "dist",
+    "src/liquid-glass.css"
+  ],
+  "style": "dist/liquid-glass.css",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/LiquidGlass.cjs",
+      "import": "./dist/LiquidGlass.esm.js"
+    },
+    "./liquid-glass.css": "./dist/liquid-glass.css"
+  },
+  "type": "module",
+  "dependencies": {
+    "@pixi/filter-displacement": "^7.4.3",
+    "pixi.js": "^8.10.1",
+    "prop-types": "^15.8.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.27.2",
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "rollup": "^4.43.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-import-css": "^4.0.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4"
+  }
+}

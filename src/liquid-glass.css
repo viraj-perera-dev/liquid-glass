@@ -1,0 +1,6 @@
+.liquid-glass {
+    backdrop-filter: blur(40px) saturate(150%);
+    border: 1px solid rgba(255,255,255,0.2);
+    /* etc */
+  }
+  
