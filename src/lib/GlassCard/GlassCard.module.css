@@ -1,0 +1,67 @@
+.glassCard {
+    position: relative;
+    width: var(--width, 100%);
+    height: var(--height, auto);
+    border-radius: var(--border-radius, 16px);
+    backdrop-filter: blur(var(--blur, 16px));
+    -webkit-backdrop-filter: blur(var(--blur, 16px));
+    background: rgba(255, 255, 255, 0.1);
+    border: var(--border-width, 1px) solid var(--border-color, rgba(255, 255, 255, 0.2));
+    overflow: hidden;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    color: white; /* Default text color */
+  }
+  
+  .glassContent {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    padding: 1.5rem;
+    box-sizing: border-box;
+  }
+  
+  .glassBorder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  
+  /* Optional: Add a subtle shine effect on hover */
+  .glassCard:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Ensure text is visible */
+  .glassCard h1, 
+  .glassCard h2, 
+  .glassCard h3, 
+  .glassCard h4, 
+  .glassCard h5, 
+  .glassCard h6,
+  .glassCard p {
+    color: inherit;
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .glassCard h1 { font-size: 2rem; }
+  .glassCard h2 { font-size: 1.5rem; }
+  .glassCard h3 { font-size: 1.25rem; }

@@ -1,55 +1,125 @@
 {
   "name": "@developer-hub/liquid-glass",
-  "version": "1.0.0",
-  "description": "Liquid Glass CSS effect inspired by Apple WWDC 2025",
-  "keywords": [
-    "css",
-    "glassmorphism",
-    "liquid",
-    "apple",
-    "blur",
-    "ui"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "author": "Viraj Perera",
-  "license": "MIT",
-  "main": "dist/LiquidGlass.cjs",
-  "module": "dist/LiquidGlass.esm.js",
+  "homepage": "https://github.com/viraj-perera-dev/liquid-glass.git",
+  "private": false,
+  "version": "0.1.0",
+  "type": "module",
   "files": [
-    "dist",
-    "src/liquid-glass.css"
+    "dist"
   ],
-  "style": "dist/liquid-glass.css",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c"
-  },
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
-      "require": "./dist/LiquidGlass.cjs",
-      "import": "./dist/LiquidGlass.esm.js"
-    },
-    "./liquid-glass.css": "./dist/liquid-glass.css"
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs"
+    }
   },
-  "type": "module",
+  "keywords": [
+    "react",
+    "template",
+    "react-testing-library",
+    "testing-library",
+    "eslint",
+    "npm",
+    "rollup",
+    "stylelint",
+    "library",
+    "package",
+    "vite",
+    "css-modules",
+    "typescript"
+  ],
+  "description": "Missing React, typescript NPM library creation template",
+  "scripts": {
+    "dev": "vite",
+    "clean:lib": "rm -rf dist",
+    "build:lib": "vite build",
+    "build": "run-s clean:lib build:lib",
+    "lint:code": "eslint src/** --report-unused-disable-directives",
+    "fix:code": "run-s 'lint:code --fix'",
+    "lint:types": "tsc --pretty --noEmit",
+    "lint:style": "stylelint ./src/**/*.css",
+    "fix:style": "run-s 'lint:style --fix'",
+    "test": "jest",
+    "preview": "vite preview",
+    "start:docs": "storybook dev -p 6006",
+    "build:docs": "storybook build",
+    "generate:component": "npx generate-react-cli component",
+    "prepare": "is-ci || husky",
+    "lint-staged": "lint-staged"
+  },
+  "peerDependencies": {
+    "react": ">=18.2.0",
+    "react-dom": ">=18.2.0"
+  },
   "dependencies": {
-    "@pixi/filter-displacement": "^7.4.3",
-    "pixi.js": "^8.10.1",
-    "prop-types": "^15.8.1"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@babel/cli": "^7.27.2",
-    "@babel/core": "^7.27.4",
-    "@babel/preset-env": "^7.27.2",
-    "@babel/preset-react": "^7.27.1",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^28.0.3",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "rollup": "^4.43.0",
-    "rollup-plugin-copy": "^3.5.0",
-    "rollup-plugin-import-css": "^4.0.1",
-    "rollup-plugin-peer-deps-external": "^2.2.4"
+    "@eslint/compat": "1.3.0",
+    "@eslint/eslintrc": "3.3.1",
+    "@eslint/js": "9.28.0",
+    "@storybook/addon-essentials": "8.6.14",
+    "@storybook/addon-interactions": "8.6.14",
+    "@storybook/addon-links": "8.6.14",
+    "@storybook/blocks": "8.6.14",
+    "@storybook/builder-vite": "8.6.14",
+    "@storybook/react": "8.6.14",
+    "@storybook/react-vite": "8.6.14",
+    "@storybook/test": "8.6.14",
+    "@storybook/types": "8.6.14",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.3.0",
+    "@types/jest": "29.5.14",
+    "@types/lodash": "4.17.17",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "@typescript-eslint/eslint-plugin": "8.34.0",
+    "@typescript-eslint/parser": "8.34.0",
+    "@vitejs/plugin-react": "4.5.2",
+    "@yelo/rollup-node-external": "1.0.1",
+    "alias-hq": "6.2.4",
+    "eslint": "9.28.0",
+    "eslint-config-prettier": "10.1.5",
+    "eslint-plugin-import": "2.31.0",
+    "eslint-plugin-prettier": "5.4.1",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-react-refresh": "0.4.20",
+    "eslint-plugin-ssr-friendly": "1.3.0",
+    "eslint-plugin-storybook": "0.12.0",
+    "generate-react-cli": "8.4.9",
+    "husky": "9.1.7",
+    "identity-obj-proxy": "3.0.0",
+    "is-ci": "4.1.0",
+    "jest": "30.0.0",
+    "jest-environment-jsdom": "30.0.0",
+    "lint-staged": "16.1.0",
+    "npm-run-all2": "8.0.4",
+    "postcss": "8.5.5",
+    "postcss-preset-env": "10.2.3",
+    "prettier": "3.5.3",
+    "react": "19.1.0",
+    "react-docgen-typescript": "2.4.0",
+    "react-dom": "19.1.0",
+    "storybook": "8.6.14",
+    "stylelint": "16.20.0",
+    "stylelint-config-standard": "38.0.0",
+    "stylelint-order": "7.0.0",
+    "stylelint-prettier": "5.0.3",
+    "ts-jest": "29.4.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.8.3",
+    "typescript-eslint": "8.34.0",
+    "vite": "6.3.5",
+    "vite-plugin-dts": "4.5.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

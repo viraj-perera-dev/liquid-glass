@@ -1,0 +1,58 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Post-merge tasks
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-publish:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cancel Workflow Action
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read .nvmrc
+        run: echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+        id: nvm
+
+      - name: Use Node.js ${{ env.NVMRC }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NVMRC }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Run merge tasks
+        run: |
+          pnpm install
+
+#      - name: Publish NPM package
+#        uses: JS-DevTools/npm-publish@v3
+#        with:
+#          token: ${{ secrets.NPM_TOKEN }}

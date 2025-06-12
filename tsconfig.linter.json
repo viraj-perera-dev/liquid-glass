@@ -1,0 +1,13 @@
+{
+  "extends" : "./tsconfig.json",
+  "include": [
+    "**/*.stories.*",
+    "*.config.*",
+    "src",
+    ".storybook/*.ts",
+    ".eslintrc.cjs",
+    "templates/**/*.ts",
+    "templates/**/*.tsx"
+  ],
+  "exclude": ["./dist/**"]
+}
