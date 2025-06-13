@@ -18,7 +18,7 @@ const App: FC = () => {
         </div>
 
         <GlassCard style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-            <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit.</h1>
+            <h1 style={{ color: 'white' }}>Lorem ipsum dolor sit amet consectetur adipisicing elit.</h1>
         </GlassCard>
         </div>
     );
