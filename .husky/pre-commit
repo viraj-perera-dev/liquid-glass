@@ -1,2 +1,0 @@
-pnpm run lint-staged
-pnpm run lint:types

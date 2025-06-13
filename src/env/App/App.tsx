@@ -1,6 +1,6 @@
 import type {FC} from 'react';
 
-import {GlassCard} from '@/lib';
+import GlassCard from '@/lib/GlassCard';
 import './index.css';
 
 const App: FC = () => {

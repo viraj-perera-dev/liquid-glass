@@ -2,7 +2,7 @@
   "name": "@developer-hub/liquid-glass",
   "homepage": "https://github.com/viraj-perera-dev/liquid-glass.git",
   "private": false,
-  "version": "0.1.0",
+  "version": "1.0.1",
   "type": "module",
   "files": [
     "dist"

@@ -1,1 +1,0 @@
-CI=true pnpm run test --passWithNoTests --silent
