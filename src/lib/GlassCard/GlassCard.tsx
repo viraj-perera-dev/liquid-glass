@@ -1,55 +1,27 @@
 import { type CSSProperties, forwardRef, useCallback, useEffect, useId, useRef, useState } from "react"
-import { ShaderDisplacementGenerator, fragmentShaders } from "./shader-utils"
-import { displacementMap, polarDisplacementMap, prominentDisplacementMap } from "./utils"
+import { displacementMap } from "./utils"
 
-// Generate shader-based displacement map using shaderUtils
-const generateShaderDisplacementMap = (width: number, height: number): string => {
-  const generator = new ShaderDisplacementGenerator({
-    width,
-    height,
-    fragment: fragmentShaders.liquidGlass,
-  })
 
-  const dataUrl = generator.updateShader()
-  generator.destroy()
-
-  return dataUrl
-}
-
-const getMap = (mode: "standard" | "polar" | "prominent" | "shader", shaderMapUrl?: string) => {
-  switch (mode) {
-    case "standard":
-      return displacementMap
-    case "polar":
-      return polarDisplacementMap
-    case "prominent":
-      return prominentDisplacementMap
-    case "shader":
-      return shaderMapUrl || displacementMap
-    default:
-      throw new Error(`Invalid mode: ${mode}`)
-  }
+const getMap = () => {
+    return displacementMap
 }
 
 /* ---------- SVG filter (edge-only displacement) ---------- */
-const GlassFilter: React.FC<{ id: string; displacementScale: number; aberrationIntensity: number; width: number; height: number; mode: "standard" | "polar" | "prominent" | "shader"; shaderMapUrl?: string }> = ({
+const GlassFilter: React.FC<{ id: string; displacementScale: number; width: number; height: number }> = ({
   id,
   displacementScale,
-  aberrationIntensity,
   width,
   height,
-  mode,
-  shaderMapUrl,
 }) => (
   <svg style={{ position: "absolute", width, height }} aria-hidden="true">
     <defs>
       <radialGradient id={`${id}-edge-mask`} cx="50%" cy="50%" r="50%">
         <stop offset="0%" stopColor="black" stopOpacity="0" />
-        <stop offset={`${Math.max(30, 80 - aberrationIntensity * 2)}%`} stopColor="black" stopOpacity="0" />
+        <stop offset={`${Math.max(30, 80)}%`} stopColor="black" stopOpacity="0" />
         <stop offset="100%" stopColor="white" stopOpacity="1" />
       </radialGradient>
       <filter id={id} x="-35%" y="-35%" width="170%" height="170%" colorInterpolationFilters="sRGB">
-        <feImage id="feimage" x="0" y="0" width="100%" height="100%" result="DISPLACEMENT_MAP" href={getMap(mode, shaderMapUrl)} preserveAspectRatio="xMidYMid slice" />
+        <feImage id="feimage" x="0" y="0" width="100%" height="100%" result="DISPLACEMENT_MAP" href={getMap()} preserveAspectRatio="xMidYMid slice" />
 
         {/* Create edge mask using the displacement map itself */}
         <feColorMatrix
@@ -62,14 +34,14 @@ const GlassFilter: React.FC<{ id: string; displacementScale: number; aberrationI
           result="EDGE_INTENSITY"
         />
         <feComponentTransfer in="EDGE_INTENSITY" result="EDGE_MASK">
-          <feFuncA type="discrete" tableValues={`0 ${aberrationIntensity * 0.05} 1`} />
+          <feFuncA type="discrete" tableValues={`0 0 1`} />
         </feComponentTransfer>
 
         {/* Original undisplaced image for center */}
         <feOffset in="SourceGraphic" dx="0" dy="0" result="CENTER_ORIGINAL" />
 
         {/* Red channel displacement with slight offset */}
-        <feDisplacementMap in="SourceGraphic" in2="DISPLACEMENT_MAP" scale={displacementScale * (mode === "shader" ? 1 : -1)} xChannelSelector="R" yChannelSelector="B" result="RED_DISPLACED" />
+        <feDisplacementMap in="SourceGraphic" in2="DISPLACEMENT_MAP" scale={displacementScale * (-1)} xChannelSelector="R" yChannelSelector="B" result="RED_DISPLACED" />
         <feColorMatrix
           in="RED_DISPLACED"
           type="matrix"
@@ -81,7 +53,7 @@ const GlassFilter: React.FC<{ id: string; displacementScale: number; aberrationI
         />
 
         {/* Green channel displacement */}
-        <feDisplacementMap in="SourceGraphic" in2="DISPLACEMENT_MAP" scale={displacementScale * ((mode === "shader" ? 1 : -1) - aberrationIntensity * 0.05)} xChannelSelector="R" yChannelSelector="B" result="GREEN_DISPLACED" />
+        <feDisplacementMap in="SourceGraphic" in2="DISPLACEMENT_MAP" scale={displacementScale * (-1)} xChannelSelector="R" yChannelSelector="B" result="GREEN_DISPLACED" />
         <feColorMatrix
           in="GREEN_DISPLACED"
           type="matrix"
@@ -93,7 +65,7 @@ const GlassFilter: React.FC<{ id: string; displacementScale: number; aberrationI
         />
 
         {/* Blue channel displacement with slight offset */}
-        <feDisplacementMap in="SourceGraphic" in2="DISPLACEMENT_MAP" scale={displacementScale * ((mode === "shader" ? 1 : -1) - aberrationIntensity * 0.1)} xChannelSelector="R" yChannelSelector="B" result="BLUE_DISPLACED" />
+        <feDisplacementMap in="SourceGraphic" in2="DISPLACEMENT_MAP" scale={displacementScale * (-1)} xChannelSelector="R" yChannelSelector="B" result="BLUE_DISPLACED" />
         <feColorMatrix
           in="BLUE_DISPLACED"
           type="matrix"
@@ -109,7 +81,7 @@ const GlassFilter: React.FC<{ id: string; displacementScale: number; aberrationI
         <feBlend in="RED_CHANNEL" in2="GB_COMBINED" mode="screen" result="RGB_COMBINED" />
 
         {/* Add slight blur to soften the aberration effect */}
-        <feGaussianBlur in="RGB_COMBINED" stdDeviation={Math.max(0.1, 0.5 - aberrationIntensity * 0.1)} result="ABERRATED_BLURRED" />
+        <feGaussianBlur in="RGB_COMBINED" stdDeviation={Math.max(0.1, 0.5)} result="ABERRATED_BLURRED" />
 
         {/* Apply edge mask to aberration effect */}
         <feComposite in="ABERRATED_BLURRED" in2="EDGE_MASK" operator="in" result="EDGE_ABERRATION" />
@@ -135,20 +107,17 @@ const GlassContainer = forwardRef<
     style?: React.CSSProperties
     displacementScale?: number
     blurAmount?: number
-    saturation?: number
-    aberrationIntensity?: number
     mouseOffset?: { x: number; y: number }
     onMouseLeave?: () => void
     onMouseEnter?: () => void
     onMouseDown?: () => void
     onMouseUp?: () => void
     active?: boolean
-    overLight?: boolean
+    shadowMode?: boolean
     cornerRadius?: number
     padding?: string
     glassSize?: { width: number; height: number }
     onClick?: () => void
-    mode?: "standard" | "polar" | "prominent" | "shader"
   }>
 >(
   (
@@ -156,45 +125,31 @@ const GlassContainer = forwardRef<
       children,
       className = "",
       style,
-      displacementScale = 25,
-      blurAmount = 12,
-      saturation = 180,
-      aberrationIntensity = 2,
+      displacementScale = 100,
+      blurAmount = 0.01,
       onMouseEnter,
       onMouseLeave,
       onMouseDown,
       onMouseUp,
       active = false,
-      overLight = false,
+      shadowMode = false,
       cornerRadius = 999,
       padding = "24px 32px",
       glassSize = { width: 270, height: 69 },
       onClick,
-      mode = "standard",
     },
     ref,
   ) => {
     const filterId = useId()
-    const [shaderMapUrl, setShaderMapUrl] = useState<string>("")
-
-    const isFirefox = navigator.userAgent.toLowerCase().includes("firefox")
-
-    // Generate shader displacement map when in shader mode
-    useEffect(() => {
-      if (mode === "shader") {
-        const url = generateShaderDisplacementMap(glassSize.width, glassSize.height)
-        setShaderMapUrl(url)
-      }
-    }, [mode, glassSize.width, glassSize.height])
 
     const backdropStyle = {
-      filter: isFirefox ? null : `url(#${filterId})`,
-      backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
+      filter: `url(#${filterId})`,
+      backdropFilter: `blur(${(shadowMode ? 12 : 4) + blurAmount * 32}px) saturate(100%)`,
     }
 
     return (
       <div ref={ref} className={`relative ${className} ${active ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`} style={style} onClick={onClick}>
-        <GlassFilter mode={mode} id={filterId} displacementScale={displacementScale} aberrationIntensity={aberrationIntensity} width={glassSize.width} height={glassSize.height} shaderMapUrl={shaderMapUrl} />
+        <GlassFilter id={filterId} displacementScale={displacementScale} width={glassSize.width} height={glassSize.height}/>
 
         <div
           className="glass"
@@ -207,7 +162,7 @@ const GlassContainer = forwardRef<
             padding,
             overflow: "hidden",
             transition: "all 0.2s ease-in-out",
-            boxShadow: overLight ? "0px 16px 70px rgba(0, 0, 0, 0.75)" : "0px 12px 40px rgba(0, 0, 0, 0.25)",
+            boxShadow: shadowMode ? "0px 16px 70px rgba(0, 0, 0, 0.75)" : "0px 12px 40px rgba(0, 0, 0, 0.25)",
           }}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
@@ -233,7 +188,7 @@ const GlassContainer = forwardRef<
               position: "relative",
               zIndex: 1,
               font: "500 20px/1 system-ui",
-              textShadow: overLight ? "0px 2px 12px rgba(0, 0, 0, 0)" : "0px 2px 12px rgba(0, 0, 0, 0.4)",
+              textShadow: shadowMode ? "0px 2px 12px rgba(0, 0, 0, 0)" : "0px 2px 12px rgba(0, 0, 0, 0.4)",
             }}
           >
             {children}
@@ -250,9 +205,6 @@ interface GlassCardProps {
   children: React.ReactNode
   displacementScale?: number
   blurAmount?: number
-  saturation?: number
-  aberrationIntensity?: number
-  elasticity?: number
   cornerRadius?: number
   globalMousePos?: { x: number; y: number }
   mouseOffset?: { x: number; y: number }
@@ -260,27 +212,22 @@ interface GlassCardProps {
   className?: string
   padding?: string
   style?: React.CSSProperties
-  overLight?: boolean
-  mode?: "standard" | "polar" | "prominent" | "shader"
+  shadowMode?: boolean
   onClick?: () => void
 }
 
 export default function GlassCard({
   children,
-  displacementScale = 70,
-  blurAmount = 0.0625,
-  saturation = 140,
-  aberrationIntensity = 2,
-  elasticity = 0.15,
-  cornerRadius = 999,
+  displacementScale = 100,
+  blurAmount = 0.01,
+  cornerRadius = 10,
   globalMousePos: externalGlobalMousePos,
   mouseOffset: externalMouseOffset,
   mouseContainer = null,
   className = "",
   padding = "24px 32px",
-  overLight = false,
+  shadowMode = false,
   style = {},
-  mode = "standard",
   onClick,
 }: GlassCardProps) {
   const glassRef = useRef<HTMLDivElement>(null)
@@ -379,7 +326,7 @@ export default function GlassCard({
     const normalizedY = deltaY / centerDistance
 
     // Calculate stretch factors with fade-in
-    const stretchIntensity = Math.min(centerDistance / 300, 1) * elasticity * fadeInFactor
+    const stretchIntensity = Math.min(centerDistance / 300, 1) * 0 * fadeInFactor
 
     // X-axis scaling: stretch horizontally when moving left/right, compress when moving up/down
     const scaleX = 1 + Math.abs(normalizedX) * stretchIntensity * 0.3 - Math.abs(normalizedY) * stretchIntensity * 0.15
@@ -388,7 +335,7 @@ export default function GlassCard({
     const scaleY = 1 + Math.abs(normalizedY) * stretchIntensity * 0.3 - Math.abs(normalizedX) * stretchIntensity * 0.15
 
     return `scaleX(${Math.max(0.8, scaleX)}) scaleY(${Math.max(0.8, scaleY)})`
-  }, [globalMousePos, elasticity, glassSize])
+  }, [globalMousePos, 0, glassSize])
 
   // Helper function to calculate fade-in factor based on distance from element edges
   const calculateFadeInFactor = useCallback(() => {
@@ -422,10 +369,10 @@ export default function GlassCard({
     const pillCenterY = rect.top + rect.height / 2
 
     return {
-      x: (globalMousePos.x - pillCenterX) * elasticity * 0.1 * fadeInFactor,
-      y: (globalMousePos.y - pillCenterY) * elasticity * 0.1 * fadeInFactor,
+      x: (globalMousePos.x - pillCenterX) * 0 * 0.1 * fadeInFactor,
+      y: (globalMousePos.y - pillCenterY) * 0 * 0.1 * fadeInFactor,
     }
-  }, [globalMousePos, elasticity, calculateFadeInFactor])
+  }, [globalMousePos, 0, calculateFadeInFactor])
 
   // Update glass size whenever component mounts or window resizes
   useEffect(() => {
@@ -459,7 +406,7 @@ export default function GlassCard({
     <>
       {/* Over light effect */}
       <div
-        className={`bg-black transition-all duration-150 ease-in-out pointer-events-none ${overLight ? "opacity-20" : "opacity-0"}`}
+        className={`bg-black transition-all duration-150 ease-in-out pointer-events-none ${shadowMode ? "opacity-20" : "opacity-0"}`}
         style={{
           ...positionStyles,
           height: glassSize.height,
@@ -470,7 +417,7 @@ export default function GlassCard({
         }}
       />
       <div
-        className={`bg-black transition-all duration-150 ease-in-out pointer-events-none mix-blend-overlay ${overLight ? "opacity-100" : "opacity-0"}`}
+        className={`bg-black transition-all duration-150 ease-in-out pointer-events-none mix-blend-overlay ${shadowMode ? "opacity-100" : "opacity-0"}`}
         style={{
           ...positionStyles,
           height: glassSize.height,
@@ -486,10 +433,8 @@ export default function GlassCard({
         className={className}
         style={baseStyle}
         cornerRadius={cornerRadius}
-        displacementScale={overLight ? displacementScale * 0.5 : displacementScale}
+        displacementScale={shadowMode ? displacementScale * 0.5 : displacementScale}
         blurAmount={blurAmount}
-        saturation={saturation}
-        aberrationIntensity={aberrationIntensity}
         glassSize={glassSize}
         padding={padding}
         mouseOffset={mouseOffset}
@@ -498,9 +443,8 @@ export default function GlassCard({
         onMouseDown={() => setIsActive(true)}
         onMouseUp={() => setIsActive(false)}
         active={isActive}
-        overLight={overLight}
+        shadowMode={shadowMode}
         onClick={onClick}
-        mode={mode}
       >
         {children}
       </GlassContainer>
