@@ -2,7 +2,7 @@
   "name": "@developer-hub/liquid-glass",
   "homepage": "https://github.com/viraj-perera-dev/liquid-glass.git",
   "private": false,
-  "version": "1.0.1",
+  "version": "1.0.3",
   "type": "module",
   "files": [
     "dist"
@@ -56,7 +56,8 @@
     "react-dom": ">=18.2.0"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "react-draggable": "^4.4.6"
   },
   "devDependencies": {
     "@eslint/compat": "1.3.0",
