@@ -95,4 +95,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-[MIT ©developer-hub](https://github.com/viraj-perera-dev/liquid-glass.git/blob/main/LICENSE)
+[MIT ©developer-hub](https://github.com/viraj-perera-dev/liquid-glass/blob/main/LICENSE)
