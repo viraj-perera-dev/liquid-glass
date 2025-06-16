@@ -13,7 +13,7 @@ npm install @developer-hub/liquid-glass
 Import and use the component in your React application:
 
 ```jsx
-import GlassCard from '@developer-hub/liquid-glass'
+import {GlassCard} from '@developer-hub/liquid-glass'
 
 function App() {
   return (
