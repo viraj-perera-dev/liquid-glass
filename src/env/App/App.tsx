@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+
 import GlassCard from '@/lib/GlassCard';
 import './index.css';
 
@@ -16,12 +17,12 @@ const App: FC = () => {
                 }}
             >
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-                <GlassCard>
-      <div className="p-6">
-        <h2>Welcome to Liquid Glass</h2>
-        <p>Experience the future of UI design with smooth, organic animations.</p>
-      </div>
-    </GlassCard>
+                    <GlassCard>
+                        <div className="p-6">
+                            <h2>Welcome to Liquid Glass</h2>
+                            <p>Experience the future of UI design with smooth, organic animations.</p>
+                        </div>
+                    </GlassCard>
                 </div>
             </div>
 

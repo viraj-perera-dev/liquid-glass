@@ -2,6 +2,10 @@
 
 A stunning React component that brings Apple's WWDC 2025-inspired liquid glass transparency effects to your applications. This component combines dynamic SVG-based liquid animations with sophisticated glassmorphism aesthetics for a truly modern user interface.
 
+## ✨ DEMO
+
+See the preview [here](https://liquid-glass-js.com/)
+
 ## Quick Start
 
 Install the package via npm:
