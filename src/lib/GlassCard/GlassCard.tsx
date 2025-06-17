@@ -275,7 +275,6 @@ export default function GlassCard({
     onClick,
 }: GlassCardProps) {
     const glassRef = useRef<HTMLDivElement>(null);
-    const [isHovered, setIsHovered] = useState(false);
     const [isActive, setIsActive] = useState(false);
     const [glassSize, setGlassSize] = useState({ width: "auto", height: "auto" });
     const [internalMouseOffset, setInternalMouseOffset] = useState({ x: 0, y: 0 });
@@ -351,8 +350,6 @@ export default function GlassCard({
                 glassSize={glassSize}
                 padding={padding}
                 mouseOffset={mouseOffset}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
                 onMouseDown={() => setIsActive(true)}
                 onMouseUp={() => setIsActive(false)}
                 active={isActive}
