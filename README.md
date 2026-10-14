@@ -148,6 +148,12 @@ We welcome contributions from the community! Whether it's bug reports, feature r
 
 Please ensure your code follows our style guidelines and includes appropriate tests.
 
+## ☕ Support the Developer
+
+If you find this project useful or it helped you build something cool, consider buying me a coffee to support future updates and maintenance!
+
+[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://buymeacoffee.com/virajperera)
+
 ## License
 
 MIT License © developer-hub
